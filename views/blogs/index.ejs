@@ -1,0 +1,32 @@
+<% layout('/layouts/boilerplate') -%>
+
+
+
+
+    <div class="container mb-5">
+        <div class="header">
+            <h3 class="allBlogs mt-5 mb-4">All Blogs</h3>
+            <div class="line"></div>
+        </div>
+        <div class="row mt-3 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 blog-cards">
+            <% for(blogs of allBlogs) { %>
+                <div class="card blog-cards-inner">
+                    <img src="<%= blogs.image%>" class="card-img-top" alt="Blog Image">
+                    <div class="p-1 mt-2">
+                        <div class="card-middle">
+                            <a href="">Jone Doe</a>
+                            <p class="card-text"><small class="text-body-secondary">APRIL 24, 2024</small></p>
+                        </div>
+                        <div class="card-body mt-2">
+                            <h4 class="card-title">
+                                <%= blogs.title %>
+                            </h4>
+                            <div class="card-details">
+                                <a href="/blogs/<%=blogs._id%>" class="btn btn-primary my-btn">Read More..</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+    </div>

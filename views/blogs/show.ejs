@@ -1,0 +1,51 @@
+<% layout('/layouts/boilerplate') -%>
+    <div class="title-container">
+        <div class="inner-container">
+            <div class="header">
+                <h3 class="allBlogs mt-5 mb-4">All Blogs</h3>
+                <div class="line"></div>
+            </div>
+
+            <div class="blog-title mt-3">
+                <h3>
+                    <%= blogs.title %>
+                </h3>
+                <div class="blog-details mt-5">
+                    <p class="card-text blog-card-small">APRIL 24, 2024 </p>
+                    <p>Jone Doe</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="show-container">
+        <div class="blog-img">
+            <div class="img-container">
+                <img src="<%= blogs.image %>" alt="Blog_image">
+            </div>
+        </div>
+        <div class="content-container mt-5 mb-4">
+            <p>
+                <%= blogs.content %>
+            </p>
+            <div class="show-function mt-5 mb-5">
+                <div>
+                    <form method="GET" action="/blogs/<%=blogs._id%>/edit">
+                        <button class="btn btn-success edit-btn">Edit Blog</button>
+                    </form>
+                </div>
+                <div>
+                    <form method="POST" action="/blogs/<%= blogs._id %>?_method=DELETE">
+                        <button class="btn btn-success del-btn">Delete Blog</button>
+                    </form>
+                </div>
+            </div>
+
+            <hr>
+    
+            <div class="review-container">
+                <h3>Blogs Feedback</h3>
+            </div>
+        </div>
+
+    </div>
