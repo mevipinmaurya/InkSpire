@@ -200,10 +200,40 @@ textarea{
     color: white;
 }
 
+
+
+/* ************************ Feedbacks of Show page ****************** */
+
 .review-container h3{
     color: #FF7543;
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 1.5rem;
+}
+.feedbacks h3{
+    color: #FF7543;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.all-feedbacks{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.feeds{
+    background: whitesmoke;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+.feeds p{
+    font-size: 15px;
+}
+.feeds div{
+    display: flex;
+    justify-content: space-between;
+
 }
 
 

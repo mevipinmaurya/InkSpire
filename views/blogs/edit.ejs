@@ -5,18 +5,18 @@
             <form method="post" action="/blogs/<%= blogs._id %>?_method=PUT" class="needs-validation">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" name="title" class="form-control" value="<%= blogs.title %>" required>
+                    <input type="text" name="blog[title]" class="form-control" value="<%= blogs.title %>" required>
                     <div class="invalid-feedback">Enter a valid title</div>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Content</label>
-                    <textarea name="content" id="content" cols="30" rows="10" class="form-control"
+                    <textarea name="blog[content]" id="content" cols="30" rows="10" class="form-control"
                         required><%= blogs.content %></textarea>
                     <div class="invalid-feedback">Please enter a Content</div>
                 </div>
                 <div class="mb-3">
                     <label for="image" class="form-label">Image URL/Link</label>
-                    <input type="text" name="image" class="form-control" value="<%= blogs.image %>">
+                    <input type="text" name="blog[image]" class="form-control" value="<%= blogs.image %>">
                 </div>
                 <div class="mb-3">
                     <button class="btn btn-dark my-btn">Update</button>
