@@ -1,14 +1,32 @@
 const express = require("express");
 const app = express();
 const mongoose = require('mongoose');
-const Blog = require("./models/blogs.js");
 const path = require("path");
 const methodOverride = require('method-override')
 const engine = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { blogSchema } = require("./schema.js");
-const Review = require("./models/review.js");
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
+
+
+const sessionOption = {
+    secret: 'mysuperSecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly : true,
+    }
+}
+
+
+const blogRouter = require("./routes/blogs.js");
+const reviewRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js");
 
 
 app.set("view engine", "ejs");
@@ -21,19 +39,6 @@ app.engine("ejs", engine);
 app.use(express.static(path.join(__dirname, "/public")));
 
 
-
-// Validate Schema
-const validateBlogs = (req, res, next) => {
-    let { err } = blogSchema.validate(req.body);
-    if (err) {
-        let errMsg = err.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, errMsg);
-    } else {
-        next();
-    }
-}
-
-
 main().then(() => {
     console.log("Connection Successfull");
 }).catch(err => console.log(err));
@@ -44,86 +49,44 @@ async function main() {
 
 
 
-// index route
-app.get("/blogs", wrapAsync(async (req, res) => {
-    let allBlogs = await Blog.find();
-    res.render("blogs/index.ejs", { allBlogs });
-}))
-
-// GET new route
-app.get("/blogs/new", (req, res) => {
-    res.render("blogs/new.ejs");
-})
-
-// POST new route
-app.post("/blogs", validateBlogs, wrapAsync(async (req, res) => {
-    const newBlog = new Blog(req.body.blog);
-
-    await newBlog.save();
-    res.redirect("/blogs");
-}))
-
-// Edit route
-app.get("/blogs/:id/edit", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let blogs = await Blog.findById(id);
-    res.render("blogs/edit.ejs", { blogs });
-}))
-
-// Update route
-app.put("/blogs/:id", validateBlogs, wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let { title: newTitle, content: newContent, image: newImg } = req.body.blog;
-    await Blog.findByIdAndUpdate(id, {
-        title: newTitle,
-        content: newContent,
-        image: newImg
-    });
-    res.redirect(`/blogs/${id}`);
-}))
-
-
-// Destroy route
-app.delete("/blogs/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let deletedBlog = await Blog.findByIdAndDelete(id);
-    console.log(deletedBlog);
-    res.redirect("/blogs");
-}))
-
-
-// Review Route
-app.post("/blogs/:id/reviews", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let blogs = await Blog.findById(id);
-    let newReview = await Review(req.body.review);
-    blogs.reviews.push(newReview);
-    await newReview.save();
-    await blogs.save();
-    res.redirect(`/blogs/${id}`);
-}))
-
-// Review Deletion route
-app.delete("/blogs/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
-    let { id, reviewId } = req.params;
-    await Blog.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/blogs/${id}`);
-}))
-
-
-// show route
-app.get("/blogs/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let blogs = await Blog.findById(id).populate("reviews");
-    res.render("blogs/show.ejs", { blogs });
-}))
-
-
 app.get("/", (req, res) => {
     res.send("I am root");
 })
 
+app.use(session(sessionOption));
+app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+app.use((req, res, next)=>{
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next()
+})
+
+
+// app.get("/demoUser", async (req, res)=>{
+//     let newUser = new User({
+//         email : "demo@gmail.com",
+//         username : "demo"
+//     });
+//     const regUser = await User.register(newUser, "demo");
+//     res.send(regUser);
+// })
+
+
+// Blogs router
+app.use("/blogs", blogRouter);
+// Review Router
+app.use("/blogs/:id/reviews", reviewRouter);
+app.use("/", userRouter);
 
 
 app.all("*", (req, res, next) => {
@@ -133,8 +96,6 @@ app.all("*", (req, res, next) => {
 // Error Handling
 app.use((err, req, res, next) => {
     let { statusCode = 500, message = "Something went wrong!!!" } = err;
-    // res.send("Something wend wrong");
-    // res.status(statusCode).send(message);
     res.status(statusCode).render("error.ejs", { message });
 })
 
