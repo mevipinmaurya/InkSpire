@@ -4,6 +4,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const { blogSchema } = require("../schema.js");
 const Blog = require("../models/blogs.js");
 const ExpressError = require("../utils/ExpressError.js");
+const { isLoggedIn, isAuthor } = require("../middleware.js");
 
 // Validate Schema
 const validateBlogs = (req, res, next) => {
@@ -18,18 +19,19 @@ const validateBlogs = (req, res, next) => {
 
 // index route
 router.get("/", wrapAsync(async (req, res) => {
-    let allBlogs = await Blog.find();
+    let allBlogs = await Blog.find().populate("author");
     res.render("blogs/index.ejs", { allBlogs });
 }))
 
 // GET new route
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("blogs/new.ejs");
 })
 
 // POST new route
 router.post("/", validateBlogs, wrapAsync(async (req, res) => {
     const newBlog = new Blog(req.body.blog);
+    newBlog.author = req.user._id;
 
     req.flash("success", "New blog posted");
     await newBlog.save();
@@ -37,10 +39,10 @@ router.post("/", validateBlogs, wrapAsync(async (req, res) => {
 }))
 
 // Edit route
-router.get("/:id/edit", validateBlogs, wrapAsync(async (req, res) => {
+router.get("/:id/edit", isLoggedIn, isAuthor, validateBlogs, wrapAsync(async (req, res) => {
     let { id } = req.params;
     let blogs = await Blog.findById(id);
-    if(!blogs){
+    if (!blogs) {
         req.flash("error", "Post does not exist !!!");
         res.redirect("/blogs");
     }
@@ -48,7 +50,7 @@ router.get("/:id/edit", validateBlogs, wrapAsync(async (req, res) => {
 }))
 
 // Update route
-router.put("/:id", validateBlogs, validateBlogs, wrapAsync(async (req, res) => {
+router.put("/:id", isLoggedIn, isAuthor, validateBlogs, wrapAsync(async (req, res) => {
     let { id } = req.params;
     let { title: newTitle, content: newContent, image: newImg } = req.body.blog;
     await Blog.findByIdAndUpdate(id, {
@@ -62,7 +64,7 @@ router.put("/:id", validateBlogs, validateBlogs, wrapAsync(async (req, res) => {
 
 
 // Destroy route
-router.delete("/:id", validateBlogs, wrapAsync(async (req, res) => {
+router.delete("/:id", isLoggedIn, isAuthor, validateBlogs, wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedBlog = await Blog.findByIdAndDelete(id);
     console.log(deletedBlog);
@@ -73,8 +75,9 @@ router.delete("/:id", validateBlogs, wrapAsync(async (req, res) => {
 // show route
 router.get("/:id", wrapAsync(async (req, res) => {
     let { id } = req.params;
-    let blogs = await Blog.findById(id).populate("reviews");
-    if(!blogs){
+    let blogs = await Blog.findById(id).populate({path : "reviews", populate : {path : "createdBy"}}).populate("author");
+    // console.log(blogs);
+    if (!blogs) {
         req.flash("error", "Post does not exist !!!");
         res.redirect("/blogs");
     }

@@ -11,8 +11,13 @@
                     <%= blogs.title %>
                 </h3>
                 <div class="blog-details mt-5">
-                    <p class="card-text blog-card-small">APRIL 24, 2024 </p>
-                    <p>Jone Doe</p>
+                    <p class="card-text blog-card-small">
+                        <%= blogs.postedAt.getDate()%>-<%= blogs.postedAt.getMonth()%>-<%=
+                                    blogs.postedAt.getFullYear()%>
+                    </p>
+                    <p>
+                        <%= blogs.author.username %>
+                    </p>
                 </div>
             </div>
         </div>
@@ -28,81 +33,86 @@
             <p>
                 <%= blogs.content %>
             </p>
-            <div class="show-function mt-5 mb-5">
-                <div>
-                    <form method="GET" action="/blogs/<%=blogs._id%>/edit">
-                        <button class="btn btn-success edit-btn">Edit Blog</button>
-                    </form>
-                </div>
-                <div>
-                    <form method="POST" action="/blogs/<%= blogs._id %>?_method=DELETE">
-                        <button class="btn btn-success del-btn">Delete Blog</button>
-                    </form>
-                </div>
-            </div>
 
-            <hr>
-
-            <div class="review-container">
-                <h3>Your feedback motivates us 😀</h3>
-                <form method="POST" action="/blogs/<%= blogs._id %>/reviews" class="needs-validation mt-5">
-                    <!-- Starability Css Feature -->
-                    <label for="rating" class="form-label">Rating</label>
-                    <fieldset class="starability-slot">
-                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked
-                            aria-label="No rating." />
-                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-                        <label for="first-rate1" title="Terrible">1 star</label>
-                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-                        <label for="first-rate2" title="Not good">2 stars</label>
-                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-                        <label for="first-rate3" title="Average">3 stars</label>
-                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-                        <label for="first-rate4" title="Very good">4 stars</label>
-                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-                        <label for="first-rate5" title="Amazing">5 stars</label>
-                    </fieldset>
-                    <div class="mb-3">
-                        <textarea name="review[comment]" id="comment" cols="30" rows="5" placeholder="Comment here ..."
-                            class="form-control" required></textarea>
-                        <div class="invalid-feedback">Please enter a feedback</div>
+            <% if(currUser && currUser._id.equals(blogs.author._id)) { %>
+                <div class="show-function mt-5 mb-5">
+                    <div>
+                        <form method="GET" action="/blogs/<%=blogs._id%>/edit">
+                            <button class="btn btn-success edit-btn">Edit Blog</button>
+                        </form>
                     </div>
-
-                    <div class="mb-3 mt-4">
-                        <button class="btn btn-dark my-btn">Submit</button>
+                    <div>
+                        <form method="POST" action="/blogs/<%= blogs._id %>?_method=DELETE">
+                            <button class="btn btn-success del-btn">Delete Blog</button>
+                        </form>
                     </div>
-                </form>
-            </div>
+                </div>
+                <% } %>
 
-            <hr>
+                    <hr>
 
-            <div class="feedbacks mt-5">
-                <h3>All Feedbacks</h3>
-                <div class="all-feedbacks">
-                    <% for(let review of blogs.reviews){ %>
-                        <div class="feeds">
-                            <div>
-                                <h5><i class="fa-solid fa-user"></i> &nbsp;@Jone doe</h5>
-                                <p>
-                                    <%= review.createdAt.getDate()%>-<%= review.createdAt.getMonth()%>-<%=
-                                                review.createdAt.getFullYear()%>
-                                </p>
+                    <div class="review-container">
+                        <h3>Your feedback motivates us 😀</h3>
+                        <form method="POST" action="/blogs/<%= blogs._id %>/reviews" class="needs-validation mt-5">
+                            <!-- Starability Css Feature -->
+                            <label for="rating" class="form-label">Rating</label>
+                            <fieldset class="starability-slot">
+                                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1"
+                                    checked aria-label="No rating." />
+                                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                                <label for="first-rate1" title="Terrible">1 star</label>
+                                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                                <label for="first-rate2" title="Not good">2 stars</label>
+                                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                                <label for="first-rate3" title="Average">3 stars</label>
+                                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                                <label for="first-rate4" title="Very good">4 stars</label>
+                                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                                <label for="first-rate5" title="Amazing">5 stars</label>
+                            </fieldset>
+                            <div class="mb-3">
+                                <textarea name="review[comment]" id="comment" cols="30" rows="5"
+                                    placeholder="Comment here ..." class="form-control" required></textarea>
+                                <div class="invalid-feedback">Please enter a feedback</div>
                             </div>
-                            <p class="starability-result" data-rating="<%= review.rating %>">
-                            </p>
-                            <p>
-                                <%= review.comment %>
-                            </p>
-                            <form method="POST"
-                                action="/blogs/<%= blogs._id %>/reviews/<%= review._id %>?_method=DELETE">
-                                <div>
-                                    <button class="btn btn-danger ms-auto">Delete</button>
+
+                            <div class="mb-3 mt-4">
+                                <button class="btn btn-dark my-btn">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <hr>
+
+                    <div class="feedbacks mt-5">
+                        <h3>All Feedbacks</h3>
+                        <div class="all-feedbacks">
+                            <% for(let review of blogs.reviews){ %>
+                                <div class="feeds">
+                                    <div>
+                                        <h5><i class="fa-solid fa-user"></i> &nbsp;@<%= review.createdBy.username %></h5>
+                                        <p>
+                                            <%= review.createdAt.getDate()%>-<%= review.createdAt.getMonth()%>-<%=
+                                                        review.createdAt.getFullYear()%>
+                                        </p>
+                                    </div>
+                                    <p class="starability-result" data-rating="<%= review.rating %>">
+                                    </p>
+                                    <p>
+                                        <%= review.comment %>
+                                    </p>
+                                    <% if(currUser._id.equals(review.createdBy._id)){ %>
+                                    <form method="POST"
+                                        action="/blogs/<%= blogs._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                        <div>
+                                            <button class="btn btn-danger ms-auto">Delete</button>
+                                        </div>
+                                    </form>
+                                    <% } %>
                                 </div>
-                            </form>
+                                <% } %>
                         </div>
-                        <% } %>
-                </div>
-            </div>
+                    </div>
         </div>
 
     </div>

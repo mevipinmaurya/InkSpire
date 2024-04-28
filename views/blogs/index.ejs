@@ -1,6 +1,93 @@
 <% layout('/layouts/boilerplate') -%>
 
+    <style>
+        #filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .icons-section {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter {
+            text-align: center;
+            margin-right: 2rem;
+            opacity: 0.7;
+        }
+
+        .filter:hover {
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        .filter p {
+            font-size: 13px;
+        }
+    </style>
+
+
     <div class="container mb-5">
+
+        <div id="filters" class="mt-4">
+            <div class="icons-section">
+                <div class="filter">
+                    <div>
+                        <i class="fa-solid fa-bowl-food"></i>
+                    </div>
+                    <p>
+                        Food
+                    </p>
+                </div>
+                <div class="filter">
+                    <div>
+                        <i class="fa-solid fa-person-walking"></i>
+                    </div>
+                    <p>
+                        Exercise
+                    </p>
+                </div>
+                <div class="filter">
+                    <div>
+                        <i class="fa-solid fa-car-side"></i>
+                    </div>
+                    <p>
+                        Travel
+                    </p>
+                </div>
+                <div class="filter">
+                    <div>
+                        <i class="fa-solid fa-spa"></i>
+                    </div>
+                    <p>
+                        Mind Therapy
+                    </p>
+                </div>
+                <div class="filter">
+                    <div>
+                        <i class="fa-solid fa-mountain-sun"></i>
+                    </div>
+                    <p>
+                        Nature
+                    </p>
+                </div>
+                <div class="filter">
+                    <div>
+                        <i class="fa-solid fa-user-nurse"></i>
+                    </div>
+                    <p>
+                        Health
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
         <div class="header">
             <h3 class="allBlogs mt-5 mb-4">All Blogs</h3>
             <div class="line"></div>
@@ -11,8 +98,14 @@
                     <img src="<%= blogs.image%>" class="card-img-top" alt="Blog Image">
                     <div class="p-1 mt-2">
                         <div class="card-middle">
-                            <a href="">Jone Doe</a>
-                            <p class="card-text"><small class="text-body-secondary">APRIL 24, 2024</small></p>
+                            <a href="">
+                                <%= blogs.author.username %>
+                            </a>
+                            <!-- <p class="card-text"><small class="text-body-secondary">APRIL 24, 2024</small></p> -->
+                            <p class="card-text"><small class="text-body-secondary">
+                                    <%= blogs.postedAt.getDate()%>-<%= blogs.postedAt.getMonth()%>-<%=
+                                                blogs.postedAt.getFullYear()%>
+                                </small></p>
                         </div>
                         <div class="card-body mt-2">
                             <h4 class="card-title">
