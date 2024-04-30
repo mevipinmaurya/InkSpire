@@ -23,6 +23,43 @@ router.get("/", wrapAsync(async (req, res) => {
     res.render("blogs/index.ejs", { allBlogs });
 }))
 
+// index food route
+router.get("/food", wrapAsync(async(req, res)=>{
+    let allBlogs = await Blog.find({category : "Food"}).populate("author");
+    res.render("blogs/index.ejs", { allBlogs });
+}))
+
+// index exercise route
+router.get("/exercise", wrapAsync(async(req, res)=>{
+    let allBlogs = await Blog.find({category : "Exercise"}).populate("author");
+    res.render("blogs/index.ejs", { allBlogs });
+}))
+
+// index travel route
+router.get("/travel", wrapAsync(async(req, res)=>{
+    let allBlogs = await Blog.find({category : "Travel"}).populate("author");
+    res.render("blogs/index.ejs", { allBlogs });
+}))
+
+// index mind therapy route
+router.get("/mindTherapy", wrapAsync(async(req, res)=>{
+    let allBlogs = await Blog.find({category : "Mind Therapy"}).populate("author");
+    res.render("blogs/index.ejs", { allBlogs });
+}))
+
+// index nature route
+router.get("/nature", wrapAsync(async(req, res)=>{
+    let allBlogs = await Blog.find({category : "Nature"}).populate("author");
+    res.render("blogs/index.ejs", { allBlogs });
+}))
+// index health route
+router.get("/health", wrapAsync(async(req, res)=>{
+    let allBlogs = await Blog.find({category : "Health"}).populate("author");
+    res.render("blogs/index.ejs", { allBlogs });
+}))
+
+
+
 // GET new route
 router.get("/new", isLoggedIn, (req, res) => {
     res.render("blogs/new.ejs");

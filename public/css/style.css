@@ -11,6 +11,37 @@ textarea{
     resize: none;
 }
 
+
+/* *************************** Header***************************  */
+#filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.icons-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter {
+    text-align: center;
+    margin-right: 2rem;
+    opacity: 0.7;
+}
+
+.filter:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+
+.filter p {
+    font-size: 13px;
+}
+
 /* **************************** Navbar **************************************** */
 .navbar{
     height: 80px;

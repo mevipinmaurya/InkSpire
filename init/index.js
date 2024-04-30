@@ -19,6 +19,10 @@ const initDB = async () => {
         ...obj,
         author: "662d5a374cedd19673d35617",
     }))
+    initData.data = initData.data.map((obj) => ({
+        ...obj,
+        category: "Health",
+    }))
     await Blog.insertMany(initData.data);
     console.log("Data was initialized to the database");
 }
